@@ -1,18 +1,66 @@
-require_relative("../db/sql_runner")
+require_relative("../db/sql_runner.rb")
 
 
 class Customer
+
+attr_accessor :id , :f_name , :l_name ,:funds
 
   def initialize(options)
 
     @id = options['id'].to_i if options['id']
 
-    @f_name = options('f_name')
+    @f_name = options['f_name']
 
-    @l_name = options('l_name')
+    @l_name = options['l_name']
 
-    @funds = optinons('funds')
+    @funds = options['funds']
 
   end
+
+  def save
+
+    sql = "INSERT INTO customers(
+    f_name,
+    l_name,
+    funds
+    )
+    VALUES($1,$2,$3)
+    RETURNING id;"
+
+    values =
+    [@f_name,@l_name,@funds]
+
+    customer = SqlRunner.run(sql,values).first
+
+    @id = customer['id'].to_i
+
+  end
+
+  def self.delete_all
+
+  sql = "DELETE FROM customers"
+
+  SqlRunner.run(sql)
+
+  end
+
+  def update()
+    sql = "UPDATE customers
+    SET (
+    f_name,
+    l_name,
+    funds
+
+    ) = ($1,$2,$3)
+    WHERE id = $4 ;"
+
+    values = [@f_name,@l_name,@funds,@id]
+    SqlRunner.run(sql,values)
+
+  end
+
+  def 
+
+
 
 end
