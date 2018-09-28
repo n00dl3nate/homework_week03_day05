@@ -59,8 +59,30 @@ attr_accessor :id , :f_name , :l_name ,:funds
 
   end
 
-  def 
+  def films()
 
+    sql = "SELECT films.* FROM films
+    INNER JOIN tickets
+    ON films.id = tickets.film_id
+    WHERE tickets.customer_id = $1"
 
+    values= [@id]
 
+    result = SqlRunner.run(sql,values)
+
+    films = result.map {|hash| Film.new(hash)}
+
+    return films
+  end
+
+  def tickets_purchased
+    return self.films.length
+  end
+
+  def buying_tickets
+    movies = self.films
+    cost = 0
+    movies.each {|movie|cost += movie.price.to_i }
+    return @funds - cost
+  end 
 end

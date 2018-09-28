@@ -79,6 +79,6 @@ ticket4.save
 
 customer2.funds = 70
 customer2.update
-
+binding.pry
 film2.title = "Titanic"
 film2.update
