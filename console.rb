@@ -82,3 +82,5 @@ customer2.update
 binding.pry
 film2.title = "Titanic"
 film2.update
+
+Film.show_movies_playing

@@ -84,5 +84,6 @@ attr_accessor :id , :f_name , :l_name ,:funds
     cost = 0
     movies.each {|movie|cost += movie.price.to_i }
     return @funds - cost
-  end 
+  end
+
 end

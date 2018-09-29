@@ -13,6 +13,8 @@ class Film
 
     @price = options['price']
 
+    @tickets = 100
+
   end
 
   def save
@@ -73,8 +75,34 @@ class Film
      return self.customers.length
    end
 
-  def show_movies_playing
-  end 
+  def self.show_movies_playing
 
+    sql = 'SELECT * FROM films;'
+
+    result = SqlRunner.run(sql)
+
+    hash = result.map do |mapped|
+      Film.new(mapped)
+    end
+
+  end
+
+  def self.most_popular
+    popular = []
+    total = 0
+    self.show_movies_playing.each do |film| if film.amount_watching > total
+    total = film.amount_watching
+    popular = film
+      end
+    end
+    return popular
+  end
+
+  def amount_of_tickets
+    if @tickets > 0
+      remaining = @tickets - amount_watching
+    end
+      return remaining
+  end
 
 end
