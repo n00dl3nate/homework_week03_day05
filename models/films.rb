@@ -13,7 +13,7 @@ class Film
 
     @price = options['price']
 
-    @tickets = 100
+
 
   end
 
@@ -57,10 +57,14 @@ class Film
 
   def customers
 
-    sql = "SELECT customers.* FROM customers
-           INNER JOIN tickets
-           ON tickets.customer_id = customers.id
-           WHERE tickets.film_id = $1"
+    sql = "SELECT DISTINCT customers.* FROM customers
+    INNER JOIN tickets
+    ON customers.id = tickets.customer_id
+    INNER JOIN screenings
+    ON screenings.id = tickets.screening_id
+    INNER JOIN films
+    ON screenings.film_id = films.id
+    WHERE films.id = $1"
 
     values = [@id]
 
@@ -75,7 +79,7 @@ class Film
      return self.customers.length
    end
 
-  def self.show_movies_playing
+  def self.all
 
     sql = 'SELECT * FROM films;'
 
@@ -87,22 +91,40 @@ class Film
 
   end
 
-  def self.most_popular
-    popular = []
-    total = 0
-    self.show_movies_playing.each do |film| if film.amount_watching > total
-    total = film.amount_watching
-    popular = film
-      end
-    end
-    return popular
-  end
+  def showtimes
 
-  def amount_of_tickets
-    if @tickets > 0
-      remaining = @tickets - amount_watching
+    sql = "SELECT DISTINCT  screenings.* FROM screenings
+    INNER JOIN films
+    ON screenings.film_id = films.id
+    WHERE films.id = $1
+    ORDER BY times "
+
+    values = [@id]
+
+    result = SqlRunner.run(sql,values)
+
+    hash = result.map do |mapped|
+      Screening.new(mapped)
     end
-      return remaining
-  end
+  end 
+
+
+  # def self.most_popular
+  #   popular = []
+  #   total = 0
+  #   self.all.each do |film| if film.amount_watching > total
+  #   total = film.amount_watching
+  #   popular = film
+  #     end
+  #   end
+  #   return popular
+  # end
+  #
+  # def amount_of_tickets
+  #   if @tickets > 0
+  #     remaining = @tickets - amount_watching
+  #   end
+  #     return remaining
+  # end
 
 end
